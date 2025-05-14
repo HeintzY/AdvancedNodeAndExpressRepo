@@ -1,7 +1,9 @@
+require('dotenv').config();
 const passport = require('passport');
 const { ObjectID } = require('mongodb');
 const LocalStrategy = require('passport-local');
 const bcrypt = require('bcrypt');
+const GitHubStrategy = require('passport-github').Strategy;
 
 module.exports = function (app, myDataBase) {
     // Serialization and deserialization here...
@@ -25,4 +27,16 @@ module.exports = function (app, myDataBase) {
             return done(null, user);
         });
     }));
+
+    passport.use(new GitHubStrategy({
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL: 'http://localhost:3000/auth/github/callback'  /*INSERT CALLBACK URL ENTERED INTO GITHUB HERE*/
+    },
+        function (accessToken, refreshToken, profile, cb) {
+            console.log(profile);
+            //Database logic here with callback containing your user object
+        }
+    ));
+
 }

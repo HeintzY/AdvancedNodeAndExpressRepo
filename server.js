@@ -42,7 +42,7 @@ myDB(async client => {
     res.redirect('/profile');
   });
 
-  app.route('/profile').get((req, res) => {
+  app.route('/profile').get(ensureAuthenticated, (req, res) => {
     res.render('profile');
   });
 
@@ -72,6 +72,14 @@ passport.use(new LocalStrategy((username, password, done) => {
     return done(null, user);
   });
 }));
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/');
+};
+
 // app.listen out here...
 
 
